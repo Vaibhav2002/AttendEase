@@ -72,7 +72,7 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.play.services.auth)
 
-
+    implementation(libs.kotlinx.dateTime)
     implementation(libs.kotlinx.serialization)
 
     implementation(libs.viewmodel)

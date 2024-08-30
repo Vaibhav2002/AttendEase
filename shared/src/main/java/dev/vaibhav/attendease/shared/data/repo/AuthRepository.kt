@@ -10,12 +10,14 @@ import javax.inject.Inject
 class AuthRepository @Inject constructor(private val auth: FirebaseAuth) {
     private val supportedDomains = listOf("rcciit.org.in")
 
-    val currentUserId
-        get() = auth.currentUser?.uid
+    val userId
+        get() = auth.currentUser?.uid ?: throw Exception("User not signed in")
 
-    val currentUser
-        get() = auth.currentUser
+    val user
+        get() = auth.currentUser ?: throw Exception("User not signed in")
 
+    val isLoggedIn
+        get() = auth.currentUser != null
 
     suspend fun signInUsingGoogle(account: GoogleSignInAccount) {
         val email = account.email ?: throw Exception("Email not found")

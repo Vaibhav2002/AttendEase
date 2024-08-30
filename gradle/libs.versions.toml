@@ -58,6 +58,7 @@ firebase-firestore = { module = "com.google.firebase:firebase-firestore-ktx" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version = "21.2.0" }
 
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.6.3"}
+kotlinx-dateTime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.6.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

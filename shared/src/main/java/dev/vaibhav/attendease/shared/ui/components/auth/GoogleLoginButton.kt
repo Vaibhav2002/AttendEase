@@ -54,7 +54,7 @@ fun GoogleLoginButton(
                 onStateChange(AuthState.Loading)
 
                 runCatching {
-                    googleLauncher.launch(googleClient.signInRequest())
+                    googleLauncher.launch(googleClient.signInIntent)
                 }.onFailure {
                     onStateChange(AuthState.Error(it))
                     isLoading = false

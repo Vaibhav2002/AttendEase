@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import dev.vaibhav.attendease.shared.ui.screens.auth.AuthScreen
 import dev.vaibhav.attendease.shared.ui.screens.auth.AuthViewModel
 import dev.vaibhav.attendease.teacher.screens.home.HomeScreen
+import dev.vaibhav.attendease.teacher.screens.home.HomeViewModel
 
 @Composable
 fun AppNavHost(
@@ -32,7 +33,8 @@ fun AppNavHost(
         }
 
         composable<Screens.Home> {
-            HomeScreen(Modifier.fillMaxSize())
+            val viewModel = hiltViewModel<HomeViewModel>()
+            HomeScreen(viewModel, Modifier.fillMaxSize())
         }
     }
 }

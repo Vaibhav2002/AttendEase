@@ -16,7 +16,9 @@ class GoogleSignInClient @Inject constructor(@ApplicationContext private val con
 
     suspend fun handleResult(result: ActivityResult): GoogleSignInAccount = when {
         result.resultCode == Activity.RESULT_OK && result.data != null -> {
-            getGoogleAccount(result.data!!)
+            getGoogleAccount(result.data!!).also {
+                runCatching { client.signOut().await() }
+            }
         }
 
         result.resultCode == Activity.RESULT_CANCELED -> throw AuthCancellationException()
@@ -29,7 +31,9 @@ class GoogleSignInClient @Inject constructor(@ApplicationContext private val con
         .requestProfile()
         .build()
 
-    fun signInRequest() = GoogleSignIn.getClient(context, signInOptions).signInIntent
+    private val client = GoogleSignIn.getClient(context, signInOptions)
+
+    val signInIntent = client.signInIntent
 
     private suspend fun getGoogleAccount(intent: Intent): GoogleSignInAccount {
         return GoogleSignIn.getSignedInAccountFromIntent(intent).await()

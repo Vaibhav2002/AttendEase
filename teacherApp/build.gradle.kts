@@ -74,6 +74,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.viewmodel)
+    implementation(libs.kotlinx.dateTime)
     implementation(libs.kotlinx.serialization)
 
     implementation(libs.hilt)

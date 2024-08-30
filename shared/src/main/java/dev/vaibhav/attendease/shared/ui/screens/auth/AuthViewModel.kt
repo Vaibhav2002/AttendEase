@@ -43,10 +43,14 @@ class AuthViewModel @Inject constructor(
         account: GoogleSignInAccount
     ) = flow { emit(authRepo.signInUsingGoogle(account)) }
         .onStart { setScreenState(ScreenState.Loading) }
-        .onEach { setScreenState(ScreenState.Normal) }
         .onEach { showSnackBar("Login Successful") }
+        .onEach { setScreenState(ScreenState.Normal) }
         .onEach { _authSuccess.emit(Unit) }
-        .safeCatch { showSnackBar() }
+        .safeCatch {
+            if(it is AuthException) showSnackBar(it.message)
+            else showSnackBar()
+            setScreenState(ScreenState.Normal)
+        }
         .onIO()
         .launchIn(viewModelScope)
 

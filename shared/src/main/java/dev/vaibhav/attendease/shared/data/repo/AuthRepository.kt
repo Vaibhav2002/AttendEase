@@ -10,9 +10,11 @@ import javax.inject.Inject
 class AuthRepository @Inject constructor(private val auth: FirebaseAuth) {
     private val supportedDomains = listOf("rcciit.org.in")
 
-    val currentUserId = auth.currentUser!!.uid
+    val currentUserId
+        get() = auth.currentUser?.uid
 
-    val currentUser = auth.currentUser
+    val currentUser
+        get() = auth.currentUser
 
 
     suspend fun signInUsingGoogle(account: GoogleSignInAccount) {

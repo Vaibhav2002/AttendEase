@@ -3,6 +3,7 @@ package dev.vaibhav.attendease.teacher.screens.attendance
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,10 +17,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -36,6 +43,7 @@ import coil.compose.AsyncImage
 import dev.vaibhav.attendease.shared.data.models.User
 import dev.vaibhav.attendease.shared.data.models.createdAt
 import dev.vaibhav.attendease.shared.ui.components.AttendEaseAppBar
+import dev.vaibhav.attendease.shared.ui.components.AttendEaseSmallAppBar
 import dev.vaibhav.attendease.shared.ui.screens.BaseScreenContent
 import dev.vaibhav.attendease.shared.utils.DateHelpers
 import qrscanner.QrScanner
@@ -50,18 +58,18 @@ fun AttendanceScreen(
     val subject by viewModel.subject.collectAsStateWithLifecycle()
     val classData by viewModel.classData.collectAsStateWithLifecycle()
     val attendees by viewModel.attendees.collectAsStateWithLifecycle()
-    val canTakeAttendance by viewModel.canTakeAttendance.collectAsStateWithLifecycle()
+    val canTakeAttendance = false
 
     val attendeeCount by remember {
         derivedStateOf { attendees.size }
     }
 
-    val appBarTitle by remember {
+    val title by remember {
         derivedStateOf {
             if (subject != null && classData != null)
                 DateHelpers.fullDate(classData!!.createdAt, false)
                     .let { "${subject!!.title} - $it" }
-            else "Attendance"
+            else null
         }
     }
 
@@ -71,10 +79,20 @@ fun AttendanceScreen(
         viewModel = viewModel,
         modifier = modifier,
         topAppBar = {
-            AttendEaseAppBar(
-                title = appBarTitle,
+            AttendEaseSmallAppBar(
+                title = "Attendance",
                 onBack = onBack,
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
+                actions = {
+                    if(canTakeAttendance)
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = Icons.Outlined.CheckCircle,
+                                contentDescription = "Save",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                }
             )
         }
     ) {
@@ -82,6 +100,16 @@ fun AttendanceScreen(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp)
         ) {
+            title?.let {
+                item {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.headlineLarge
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+            }
+
             if (canTakeAttendance) {
                 item {
                     Surface(
@@ -116,7 +144,8 @@ fun AttendanceScreen(
             item {
                 Text(
                     text = "Attendees ($attendeeCount)",
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+                    color = LocalContentColor.current.copy(alpha = 0.7f)
                 )
             }
 

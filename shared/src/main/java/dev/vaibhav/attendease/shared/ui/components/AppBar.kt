@@ -13,6 +13,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -34,6 +35,35 @@ fun AttendEaseAppBar(
                 style = MaterialTheme.typography.headlineLarge
             )
         },
+        windowInsets = WindowInsets(0.dp),
+        modifier = modifier,
+        scrollBehavior = scrollBehavior,
+        actions = actions,
+        navigationIcon = {
+            AnimatedVisibility(
+                visible = onBack != null,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                IconButton(onClick = { onBack?.invoke() }) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                }
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AttendEaseSmallAppBar(
+    title: String,
+    onBack: (() -> Unit)? = null,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    actions: @Composable RowScope.() -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    TopAppBar(
+        title = { Text(text = title) },
         windowInsets = WindowInsets(0.dp),
         modifier = modifier,
         scrollBehavior = scrollBehavior,

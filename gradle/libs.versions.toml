@@ -60,6 +60,10 @@ play-services-auth = { module = "com.google.android.gms:play-services-auth", ver
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.6.3"}
 kotlinx-dateTime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.6.0" }
 
+qrKit = { module = "network.chaintech:qr-kit", version = "2.0.0"}
+coil = { module = "io.coil-kt:coil-compose", version = "2.7.0"}
+qrGenerator = { module = "io.github.alexzhirkevich:qrose", version = "1.0.1" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

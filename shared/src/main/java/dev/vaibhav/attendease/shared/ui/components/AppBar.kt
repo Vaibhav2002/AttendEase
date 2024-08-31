@@ -31,7 +31,7 @@ fun AttendEaseAppBar(
         title = {
             Text(
                 text = title,
-                style = MaterialTheme.typography.displaySmall
+                style = MaterialTheme.typography.headlineLarge
             )
         },
         windowInsets = WindowInsets(0.dp),

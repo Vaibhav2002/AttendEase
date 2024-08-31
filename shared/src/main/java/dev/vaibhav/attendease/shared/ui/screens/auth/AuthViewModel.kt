@@ -2,7 +2,11 @@ package dev.vaibhav.attendease.shared.ui.screens.auth
 
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.vaibhav.attendease.shared.data.models.Role
 import dev.vaibhav.attendease.shared.data.repo.AuthRepository
 import dev.vaibhav.attendease.shared.ui.components.auth.AuthState
 import dev.vaibhav.attendease.shared.ui.screens.BaseViewModel
@@ -17,13 +21,18 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import javax.inject.Inject
 
-@HiltViewModel
-class AuthViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = AuthViewModel.Factory::class)
+class AuthViewModel @AssistedInject constructor(
     val signInClient: GoogleSignInClient,
-    private val authRepo: AuthRepository
+    private val authRepo: AuthRepository,
+    @Assisted private val role: Role
 ) : BaseViewModel() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(role: Role): AuthViewModel
+    }
 
     private val _authSuccess = MutableSharedFlow<Unit>()
     val authSuccess = _authSuccess.asSharedFlow()
@@ -41,7 +50,7 @@ class AuthViewModel @Inject constructor(
 
     private fun login(
         account: GoogleSignInAccount
-    ) = flow { emit(authRepo.signInUsingGoogle(account)) }
+    ) = flow { emit(authRepo.signInUsingGoogle(account, role)) }
         .onStart { setScreenState(ScreenState.Loading) }
         .onEach { showSnackBar("Login Successful") }
         .onEach { setScreenState(ScreenState.Normal) }

@@ -1,10 +1,12 @@
 package dev.vaibhav.attendease.shared.data.repo
 
 import com.google.firebase.firestore.FirebaseFirestore
+import dev.vaibhav.attendease.shared.data.models.Attendance
 import dev.vaibhav.attendease.shared.data.models.Class
 import dev.vaibhav.attendease.shared.utils.DateHelpers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -22,6 +24,15 @@ class ClassesRepository @Inject constructor(
             }
 
         awaitClose { listener.remove() }
+    }
+
+    suspend fun getClass(classId: String): Class {
+        return firestore.collection(collection)
+            .document(classId)
+            .get()
+            .await()
+            .toObject(Class::class.java)
+            ?: throw Exception("Class not found")
     }
 
     suspend fun createClass(subjectId: String):String {

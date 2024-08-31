@@ -82,4 +82,7 @@ dependencies {
 
     implementation(libs.navigation.compose)
     implementation(libs.navigation.runtime)
+
+    implementation(libs.coil)
+    implementation(libs.qrGenerator)
 }

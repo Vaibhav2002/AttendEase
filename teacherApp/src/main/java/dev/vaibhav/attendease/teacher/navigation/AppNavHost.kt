@@ -8,8 +8,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import dev.vaibhav.attendease.shared.data.models.Role
 import dev.vaibhav.attendease.shared.ui.screens.auth.AuthScreen
 import dev.vaibhav.attendease.shared.ui.screens.auth.AuthViewModel
+import dev.vaibhav.attendease.teacher.screens.attendance.AttendanceScreen
+import dev.vaibhav.attendease.teacher.screens.attendance.AttendanceViewModel
 import dev.vaibhav.attendease.teacher.screens.classes.ClassesScreen
 import dev.vaibhav.attendease.teacher.screens.classes.ClassesViewModel
 import dev.vaibhav.attendease.teacher.screens.home.HomeScreen
@@ -27,7 +30,9 @@ fun AppNavHost(
         modifier = modifier
     ) {
         composable<Screens.Auth> {
-            val viewModel = hiltViewModel<AuthViewModel>()
+            val viewModel = hiltViewModel<AuthViewModel, AuthViewModel.Factory> { factory ->
+                factory.create(Role.TEACHER)
+            }
             AuthScreen(
                 viewModel = viewModel,
                 modifier = Modifier.fillMaxSize(),
@@ -57,8 +62,21 @@ fun AppNavHost(
                 viewModel = viewModel,
                 modifier = Modifier.fillMaxSize(),
                 onBack = navController::popBackStack,
-                onNavToDetails = { },
-                onNavToAttendance = { _, _ -> }
+                onNavToAttendance = { classId ->
+                    navController.navigate(Screens.Attendance(classId))
+                }
+            )
+        }
+
+        composable<Screens.Attendance> {
+            val classId = it.toRoute<Screens.Attendance>().classId
+            val viewModel = hiltViewModel<AttendanceViewModel, AttendanceViewModel.Factory> { factory ->
+                factory.create(classId)
+            }
+            AttendanceScreen(
+                viewModel = viewModel,
+                modifier = Modifier.fillMaxSize(),
+                onBack = navController::popBackStack
             )
         }
     }

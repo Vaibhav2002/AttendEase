@@ -27,6 +27,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,7 +43,10 @@ import dev.vaibhav.attendease.shared.data.models.createdAt
 import dev.vaibhav.attendease.shared.ui.components.AttendEaseAppBar
 import dev.vaibhav.attendease.shared.ui.screens.BaseScreenContent
 import dev.vaibhav.attendease.shared.utils.DateHelpers
+import dev.vaibhav.attendease.shared.utils.safeCatch
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
 import java.time.format.TextStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,8 +55,7 @@ fun ClassesScreen(
     viewModel: ClassesViewModel,
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
-    onNavToDetails: (Class) -> Unit,
-    onNavToAttendance: (Subject, String) -> Unit
+    onNavToAttendance: (String) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val subject by viewModel.subject.collectAsStateWithLifecycle()
@@ -60,6 +63,13 @@ fun ClassesScreen(
     val classes by viewModel.classes
         .mapLatest { it.groupBy { DateHelpers.toLocalDateTime(it.createdAt).month } }
         .collectAsStateWithLifecycle(emptyMap())
+
+    LaunchedEffect(Unit) {
+        viewModel.classCreated
+            .onEach { onNavToAttendance(it) }
+            .safeCatch()
+            .launchIn(this)
+    }
 
     BaseScreenContent(
         viewModel = viewModel,
@@ -104,7 +114,7 @@ fun ClassesScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(1f),
-                        onClick = { onNavToDetails(it) }
+                        onClick = { onNavToAttendance(it.id) }
                     )
                 }
             }

@@ -10,6 +10,8 @@ import androidx.navigation.compose.composable
 import dev.vaibhav.attendease.shared.data.models.Role
 import dev.vaibhav.attendease.shared.ui.screens.auth.AuthScreen
 import dev.vaibhav.attendease.shared.ui.screens.auth.AuthViewModel
+import dev.vaibhav.attendease.shared.ui.screens.profile.ProfileScreen
+import dev.vaibhav.attendease.shared.ui.screens.profile.ProfileViewModel
 import dev.vaibhav.attendease.student.screens.home.HomeScreen
 import dev.vaibhav.attendease.student.screens.home.HomeViewModel
 
@@ -31,7 +33,13 @@ fun AppNavHost(
             AuthScreen(
                 viewModel = viewModel,
                 modifier = Modifier.fillMaxSize(),
-                onAuthSuccess = { navController.navigate(Screens.Home) }
+                onAuthSuccess = {
+                    navController.navigate(Screens.Home) {
+                        popUpTo(Screens.Auth){
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
 
@@ -39,7 +47,24 @@ fun AppNavHost(
             val viewModel = hiltViewModel<HomeViewModel>()
             HomeScreen(
                 viewModel = viewModel,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                onNavToProfile = { navController.navigate(Screens.Profile) }
+            )
+        }
+
+        composable<Screens.Profile> {
+            val viewModel = hiltViewModel<ProfileViewModel>()
+            ProfileScreen(
+                viewModel = viewModel,
+                modifier = Modifier.fillMaxSize(),
+                onLogout = {
+                    navController.navigate(Screens.Auth){
+                        popUpTo(navController.graph.id){
+                            inclusive = true
+                        }
+                    }
+                },
+                onNavBack = { navController.popBackStack() }
             )
         }
     }

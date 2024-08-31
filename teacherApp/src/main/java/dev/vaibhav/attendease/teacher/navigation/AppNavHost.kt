@@ -11,6 +11,8 @@ import androidx.navigation.toRoute
 import dev.vaibhav.attendease.shared.data.models.Role
 import dev.vaibhav.attendease.shared.ui.screens.auth.AuthScreen
 import dev.vaibhav.attendease.shared.ui.screens.auth.AuthViewModel
+import dev.vaibhav.attendease.shared.ui.screens.profile.ProfileScreen
+import dev.vaibhav.attendease.shared.ui.screens.profile.ProfileViewModel
 import dev.vaibhav.attendease.teacher.screens.attendance.AttendanceScreen
 import dev.vaibhav.attendease.teacher.screens.attendance.AttendanceViewModel
 import dev.vaibhav.attendease.teacher.screens.classes.ClassesScreen
@@ -36,7 +38,13 @@ fun AppNavHost(
             AuthScreen(
                 viewModel = viewModel,
                 modifier = Modifier.fillMaxSize(),
-                onAuthSuccess = { navController.navigate(Screens.Home) }
+                onAuthSuccess = {
+                    navController.navigate(Screens.Home) {
+                        popUpTo(Screens.Auth) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
 
@@ -45,9 +53,8 @@ fun AppNavHost(
             HomeScreen(
                 viewModel = viewModel,
                 modifier = Modifier.fillMaxSize(),
-                onNavToClasses = {
-                    navController.navigate(Screens.Classes(it.id))
-                }
+                onNavToClasses = { navController.navigate(Screens.Classes(it.id)) },
+                onNavToProfile = { navController.navigate(Screens.Profile) }
             )
         }
 
@@ -70,13 +77,30 @@ fun AppNavHost(
 
         composable<Screens.Attendance> {
             val classId = it.toRoute<Screens.Attendance>().classId
-            val viewModel = hiltViewModel<AttendanceViewModel, AttendanceViewModel.Factory> { factory ->
-                factory.create(classId)
-            }
+            val viewModel =
+                hiltViewModel<AttendanceViewModel, AttendanceViewModel.Factory> { factory ->
+                    factory.create(classId)
+                }
             AttendanceScreen(
                 viewModel = viewModel,
                 modifier = Modifier.fillMaxSize(),
                 onBack = navController::popBackStack
+            )
+        }
+
+        composable<Screens.Profile> {
+            val viewModel = hiltViewModel<ProfileViewModel>()
+            ProfileScreen(
+                viewModel = viewModel,
+                modifier = Modifier.fillMaxSize(),
+                onLogout = {
+                    navController.navigate(Screens.Auth) {
+                        popUpTo(navController.graph.id) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onNavBack = { navController.popBackStack() }
             )
         }
     }

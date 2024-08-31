@@ -50,4 +50,8 @@ class AuthRepository @Inject constructor(
         userRepository.saveUser(account, role)
         auth.signInWithCredential(credential).await()
     }
+
+    fun logout() {
+        auth.signOut()
+    }
 }

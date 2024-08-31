@@ -17,4 +17,7 @@ sealed interface Screens {
 
     @Serializable
     data class Attendance(val classId: String) : Screens
+
+    @Serializable
+    data object Profile : Screens
 }

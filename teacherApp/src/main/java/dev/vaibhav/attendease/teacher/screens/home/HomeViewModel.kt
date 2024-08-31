@@ -7,6 +7,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.vaibhav.attendease.shared.data.models.Department
+import dev.vaibhav.attendease.shared.data.repo.AuthRepository
 import dev.vaibhav.attendease.shared.data.repo.SubjectsRepository
 import dev.vaibhav.attendease.shared.ui.screens.BaseViewModel
 import dev.vaibhav.attendease.shared.ui.screens.ScreenState
@@ -22,7 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val subjectsRepo: SubjectsRepository
+    private val subjectsRepo: SubjectsRepository,
+    private val authRepo: AuthRepository
 ) : BaseViewModel() {
 
     var subjectCreationSheet by mutableStateOf(false)
@@ -40,6 +42,8 @@ class HomeViewModel @Inject constructor(
     val departments = Department.entries.toList()
 
     var isSaving by mutableStateOf(false)
+
+    val user = authRepo.user
 
     val subjects = subjectsRepo.subjects
         .onStart { setScreenState(ScreenState.Loading) }

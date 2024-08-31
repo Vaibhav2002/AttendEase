@@ -10,4 +10,7 @@ sealed interface Screens {
 
     @Serializable
     data object Home : Screens
+
+    @Serializable
+    data object Profile : Screens
 }

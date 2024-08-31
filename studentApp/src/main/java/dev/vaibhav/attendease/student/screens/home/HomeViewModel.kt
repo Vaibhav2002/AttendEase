@@ -16,6 +16,8 @@ class HomeViewModel @Inject constructor(
     private val authRepo: AuthRepository,
 ): BaseViewModel() {
 
+    val user = authRepo.user
+
     fun getQRData() = QrModel(
         studentId = authRepo.email.substringBefore("@"),
         email = authRepo.email,

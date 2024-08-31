@@ -40,7 +40,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavToClasses:(Subject) -> Unit
 ) {
     val subjects by viewModel.subjects.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
@@ -74,7 +75,11 @@ fun HomeScreen(
                     items = subjects,
                     key = Subject::id
                 ){
-                    SubjectCard(subject = it, modifier = Modifier.fillMaxWidth())
+                    SubjectCard(
+                        subject = it,
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { onNavToClasses(it) }
+                    )
                 }
             }
 
@@ -106,11 +111,12 @@ fun HomeScreen(
 @Composable
 fun SubjectCard(
     subject: Subject,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
 ) {
     Surface(
         modifier = modifier,
-        onClick = {},
+        onClick = onClick,
         tonalElevation = 2.dp,
         shape = RoundedCornerShape(12.dp)
     ) {

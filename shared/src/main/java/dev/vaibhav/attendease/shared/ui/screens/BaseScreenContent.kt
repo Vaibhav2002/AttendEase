@@ -1,6 +1,7 @@
 package dev.vaibhav.attendease.shared.ui.screens
 
 import android.app.ActivityManager.ProcessErrorStateInfo
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -38,10 +40,15 @@ import kotlinx.coroutines.flow.onEach
 fun BaseScreenContent(
     viewModel: BaseViewModel,
     modifier: Modifier = Modifier,
+    topAppBar: @Composable () -> Unit = {},
+    fab: @Composable () -> Unit = {},
     content: @Composable () -> Unit
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     val screenState by viewModel.screenState.collectAsState()
+    val isNormalState by remember {
+        derivedStateOf { screenState is ScreenState.Normal }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.snackBarEvent
@@ -57,6 +64,16 @@ fun BaseScreenContent(
                 Snackbar(snackbarData = it)
             }
         },
+        topBar = {
+            AnimatedVisibility(visible = isNormalState) {
+                topAppBar()
+            }
+        },
+        floatingActionButton = {
+            AnimatedVisibility(visible = isNormalState) {
+                fab()
+            }
+        }
     ) {
         Crossfade(
             targetState = screenState,

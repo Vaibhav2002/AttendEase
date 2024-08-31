@@ -1,5 +1,6 @@
 package dev.vaibhav.attendease.teacher.navigation
 
+import dev.vaibhav.attendease.shared.data.models.Subject
 import kotlinx.serialization.Serializable
 
 @Serializable

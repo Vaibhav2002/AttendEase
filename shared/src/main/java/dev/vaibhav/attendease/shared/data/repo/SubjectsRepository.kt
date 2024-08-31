@@ -20,12 +20,15 @@ class SubjectsRepository @Inject constructor(
         val listener = firestore.collection(collection)
             .whereEqualTo("createdBy", authRepo.userId)
             .addSnapshotListener { value, error ->
-                if(error != null) throw error
+                if (error != null) throw error
                 value?.toObjects(Subject::class.java)?.toList()?.let(::trySend)
             }
 
         awaitClose { listener.remove() }
     }
+
+    suspend fun getSubject(id: String) =
+        firestore.collection(collection).document(id).get().await().toObject(Subject::class.java)
 
     suspend fun createSubject(
         title: String,

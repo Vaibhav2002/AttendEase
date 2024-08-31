@@ -7,8 +7,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import dev.vaibhav.attendease.shared.ui.screens.auth.AuthScreen
 import dev.vaibhav.attendease.shared.ui.screens.auth.AuthViewModel
+import dev.vaibhav.attendease.teacher.screens.classes.ClassesScreen
+import dev.vaibhav.attendease.teacher.screens.classes.ClassesViewModel
 import dev.vaibhav.attendease.teacher.screens.home.HomeScreen
 import dev.vaibhav.attendease.teacher.screens.home.HomeViewModel
 
@@ -22,7 +25,7 @@ fun AppNavHost(
         navController = navController,
         startDestination = startDestination,
         modifier = modifier
-    ){
+    ) {
         composable<Screens.Auth> {
             val viewModel = hiltViewModel<AuthViewModel>()
             AuthScreen(
@@ -34,7 +37,29 @@ fun AppNavHost(
 
         composable<Screens.Home> {
             val viewModel = hiltViewModel<HomeViewModel>()
-            HomeScreen(viewModel, Modifier.fillMaxSize())
+            HomeScreen(
+                viewModel = viewModel,
+                modifier = Modifier.fillMaxSize(),
+                onNavToClasses = {
+                    navController.navigate(Screens.Classes(it.id))
+                }
+            )
+        }
+
+        composable<Screens.Classes> {
+            val subjectId = it.toRoute<Screens.Classes>().subjectId
+            val viewModel =
+                hiltViewModel<ClassesViewModel, ClassesViewModel.ClassesViewModelFactory> { factory ->
+                    factory.create(subjectId)
+                }
+
+            ClassesScreen(
+                viewModel = viewModel,
+                modifier = Modifier.fillMaxSize(),
+                onBack = navController::popBackStack,
+                onNavToDetails = { },
+                onNavToAttendance = { _, _ -> }
+            )
         }
     }
 }

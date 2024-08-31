@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.jvm.Throws
 
 abstract class BaseViewModel(
     state: ScreenState = ScreenState.Normal
@@ -30,7 +31,7 @@ abstract class BaseViewModel(
         _screenState.update { state }
     }
 
-    fun setErrorState(error: Exception) {
+    fun setErrorState(error: Throwable) {
         setScreenState(ScreenState.Error(error))
     }
 

@@ -58,7 +58,7 @@ fun AttendanceScreen(
     val subject by viewModel.subject.collectAsStateWithLifecycle()
     val classData by viewModel.classData.collectAsStateWithLifecycle()
     val attendees by viewModel.attendees.collectAsStateWithLifecycle()
-    val canTakeAttendance = false
+    val canTakeAttendance by viewModel.canTakeAttendance.collectAsStateWithLifecycle()
 
     val attendeeCount by remember {
         derivedStateOf { attendees.size }

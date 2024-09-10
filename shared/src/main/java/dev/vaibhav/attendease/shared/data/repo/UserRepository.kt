@@ -18,7 +18,9 @@ class UserRepository @Inject constructor(
             .whereIn("id", ids)
             .get()
             .await()
-            .toObjects(User::class.java)
+            .takeIf { !it.isEmpty }
+            ?.toObjects(User::class.java)
+            ?: emptyList()
     }
 
     suspend fun getUser(email: String): User {

@@ -25,7 +25,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val subjectsRepo: SubjectsRepository,
     private val authRepo: AuthRepository
-) : BaseViewModel() {
+) : BaseViewModel(ScreenState.Loading) {
 
     var subjectCreationSheet by mutableStateOf(false)
 

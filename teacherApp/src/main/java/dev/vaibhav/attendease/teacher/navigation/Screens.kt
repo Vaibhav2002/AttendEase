@@ -13,7 +13,7 @@ sealed interface Screens {
     data object Home : Screens
 
     @Serializable
-    data class Classes(val subjectId: String) : Screens
+    data class Classes(val subjectId: String, val subjectName: String) : Screens
 
     @Serializable
     data class Attendance(val classId: String) : Screens

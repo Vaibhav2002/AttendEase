@@ -52,13 +52,13 @@ import java.time.format.TextStyle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClassesScreen(
+    subjectName: String,
     viewModel: ClassesViewModel,
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
     onNavToAttendance: (String) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val subject by viewModel.subject.collectAsStateWithLifecycle()
 
     val classes by viewModel.classes
         .mapLatest { it.groupBy { DateHelpers.toLocalDateTime(it.createdAt).month } }
@@ -75,13 +75,11 @@ fun ClassesScreen(
         viewModel = viewModel,
         modifier = modifier,
         topAppBar = {
-            subject?.let {
-                AttendEaseAppBar(
-                    title = it.title,
-                    onBack = onBack,
-                    scrollBehavior = scrollBehavior
-                )
-            }
+            AttendEaseAppBar(
+                title = subjectName,
+                onBack = onBack,
+                scrollBehavior = scrollBehavior
+            )
         },
         fab = {
             CreateClassFab(
@@ -136,7 +134,7 @@ fun ClassItem(
         modifier = modifier,
         tonalElevation = 1.dp,
 
-    ) {
+        ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

@@ -1,6 +1,5 @@
 package dev.vaibhav.attendease.shared.ui.screens
 
-import android.app.ActivityManager.ProcessErrorStateInfo
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.BorderStroke
@@ -58,17 +57,13 @@ fun BaseScreenContent(
     }
 
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState){
+            SnackbarHost(hostState = snackBarHostState) {
                 Snackbar(snackbarData = it)
             }
         },
-        topBar = {
-            AnimatedVisibility(visible = isNormalState) {
-                topAppBar()
-            }
-        },
+        topBar = { topAppBar() },
         floatingActionButton = {
             AnimatedVisibility(visible = isNormalState) {
                 fab()
@@ -77,16 +72,19 @@ fun BaseScreenContent(
     ) {
         Crossfade(
             targetState = screenState,
-            modifier = Modifier.padding(it),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it),
             label = "Main Content"
         ) {
-            when(it){
+            when (it) {
                 is ScreenState.Error -> {
                     ErrorState(
                         modifier = Modifier.fillMaxSize(),
                         onRetry = viewModel::retry
                     )
                 }
+
                 ScreenState.Loading -> LoadingState(Modifier.fillMaxSize())
                 ScreenState.Normal -> content()
             }
@@ -97,7 +95,7 @@ fun BaseScreenContent(
 @Composable
 private fun ErrorState(
     modifier: Modifier = Modifier,
-    onRetry:() -> Unit
+    onRetry: () -> Unit
 ) {
     Column(
         modifier = modifier,
@@ -137,7 +135,7 @@ private fun ErrorState(
 
 @Composable
 private fun LoadingState(modifier: Modifier = Modifier) {
-    Box(modifier = modifier, contentAlignment = Alignment.Center){
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
     }
 }

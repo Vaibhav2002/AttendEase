@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.vaibhav.attendease.shared.data.models.QrModel
 import dev.vaibhav.attendease.shared.data.models.User
 import dev.vaibhav.attendease.shared.data.models.createdAt
+import dev.vaibhav.attendease.shared.data.models.exceptions.AttendanceException
 import dev.vaibhav.attendease.shared.data.repo.AttendanceRepository
 import dev.vaibhav.attendease.shared.data.repo.AuthRepository
 import dev.vaibhav.attendease.shared.data.repo.ClassesRepository
@@ -94,7 +95,11 @@ class AttendanceViewModel @AssistedInject constructor(
         .filter { validateQR(it) }
         .distinctUntilChangedBy { it.studentId }
         .map { attendanceRepo.addAttendee(classId, it.studentId) }
-        .safeCatch { showSnackBar("Failed to capture attendance") }
+        .safeCatch {
+            if(it is AttendanceException)
+                showSnackBar(it.message ?: "Failed to capture attendance")
+            else showSnackBar("Failed to capture attendance")
+        }
         .onIO()
         .launchIn(viewModelScope)
 

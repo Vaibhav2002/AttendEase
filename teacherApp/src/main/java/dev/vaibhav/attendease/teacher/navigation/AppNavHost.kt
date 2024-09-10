@@ -53,20 +53,21 @@ fun AppNavHost(
             HomeScreen(
                 viewModel = viewModel,
                 modifier = Modifier.fillMaxSize(),
-                onNavToClasses = { navController.navigate(Screens.Classes(it.id)) },
+                onNavToClasses = { navController.navigate(Screens.Classes(it.id, it.title)) },
                 onNavToProfile = { navController.navigate(Screens.Profile) }
             )
         }
 
         composable<Screens.Classes> {
-            val subjectId = it.toRoute<Screens.Classes>().subjectId
+            val route = it.toRoute<Screens.Classes>()
             val viewModel =
                 hiltViewModel<ClassesViewModel, ClassesViewModel.ClassesViewModelFactory> { factory ->
-                    factory.create(subjectId)
+                    factory.create(route.subjectId)
                 }
 
             ClassesScreen(
                 viewModel = viewModel,
+                subjectName = route.subjectName,
                 modifier = Modifier.fillMaxSize(),
                 onBack = navController::popBackStack,
                 onNavToAttendance = { classId ->

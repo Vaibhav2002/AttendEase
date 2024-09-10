@@ -18,6 +18,7 @@ import dev.vaibhav.attendease.shared.utils.safeCatch
 import dev.vaibhav.attendease.shared.utils.toStateFlow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -30,7 +31,6 @@ import kotlinx.coroutines.flow.onStart
 @HiltViewModel(assistedFactory = ClassesViewModel.ClassesViewModelFactory::class)
 class ClassesViewModel @AssistedInject constructor(
     @Assisted val subjectId: String,
-    private val subjectRepo: SubjectsRepository,
     private val classesRepo: ClassesRepository
 ) : BaseViewModel() {
 
@@ -39,20 +39,10 @@ class ClassesViewModel @AssistedInject constructor(
         fun create(subjectId: String): ClassesViewModel
     }
 
-    val subject = retry
-        .onStart { emit(Unit) }
-        .mapLatest { subjectId }
+    val classes = flow { emit(subjectId) }
+        .distinctUntilChanged()
         .onEach { setScreenState(ScreenState.Loading) }
-        .mapLatest { subjectRepo.getSubject(it) }
-        .onIO()
-        .safeCatch { setErrorState(it) }
-        .toStateFlow(viewModelScope, null)
-
-    val classes = subject
-        .filterNotNull()
-        .distinctUntilChangedBy { it.id }
-        .onEach { setScreenState(ScreenState.Loading) }
-        .flatMapLatest { classesRepo.getClasses(it.id) }
+        .flatMapLatest { classesRepo.getClasses(it) }
         .onEach { setScreenState(ScreenState.Normal) }
         .safeCatch { showSnackBar(); setScreenState(ScreenState.Normal) }
         .onIO()
@@ -64,7 +54,7 @@ class ClassesViewModel @AssistedInject constructor(
     private val _classCreated = MutableSharedFlow<String>()
     val classCreated = _classCreated.asSharedFlow()
 
-    fun onCreateClass() = flow { emit(subject.value?.id) }
+    fun onCreateClass() = flow { emit(subjectId) }
         .filterNotNull()
         .mapLatest { classesRepo.createClass(it) }
         .onStart { isCreatingClass = true }

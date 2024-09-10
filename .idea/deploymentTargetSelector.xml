@@ -7,10 +7,10 @@
       </SelectionState>
       <SelectionState runConfigName="teacherApp">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-09-10T08:14:14.805Z">
+        <DropdownSelection timestamp="2024-09-10T08:23:21.876874Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/vaibhav/.android/avd/Pixel_8_Pro_API_34.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=RZCT70ZV76W" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -18,10 +18,10 @@
       </SelectionState>
       <SelectionState runConfigName="studentApp">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-08-31T10:22:41.200969Z">
+        <DropdownSelection timestamp="2024-09-10T08:23:16.148978Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/vaibhav/.android/avd/Pixel_8_Pro_API_34.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=RZCT70ZV76W" />
             </handle>
           </Target>
         </DropdownSelection>

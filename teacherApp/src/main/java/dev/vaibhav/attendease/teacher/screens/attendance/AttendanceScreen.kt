@@ -42,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import dev.vaibhav.attendease.shared.data.models.User
 import dev.vaibhav.attendease.shared.data.models.createdAt
+import dev.vaibhav.attendease.shared.data.models.rollNumber
 import dev.vaibhav.attendease.shared.ui.components.AttendEaseAppBar
 import dev.vaibhav.attendease.shared.ui.components.AttendEaseSmallAppBar
 import dev.vaibhav.attendease.shared.ui.screens.BaseScreenContent
@@ -176,18 +177,24 @@ fun AttendeeItem(
                 model = user.profilePic,
                 contentDescription = user.name,
                 modifier = Modifier
-                    .size(54.dp)
+                    .size(48.dp)
                     .clip(CircleShape)
             )
 
             Text(
                 text = user.name,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .weight(1f)
                     .basicMarquee()
+            )
+
+            Text(
+                text = user.rollNumber,
+                style = MaterialTheme.typography.bodyLarge,
+                maxLines = 1,
             )
         }
     }

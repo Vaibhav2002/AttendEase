@@ -24,6 +24,15 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release"){
+            storeFile = file("${rootProject.projectDir}/keystore/attendease-teacher.jks")
+            keyAlias = "AttendEaseTeacher"
+            keyPassword = "AttendEaseTeacher"
+            storePassword = "AttendEaseTeacher"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -31,6 +40,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

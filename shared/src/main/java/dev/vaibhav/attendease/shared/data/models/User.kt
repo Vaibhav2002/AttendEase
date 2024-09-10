@@ -7,3 +7,6 @@ data class User(
     val profilePic: String = "",
     val role: Role = Role.STUDENT
 )
+
+val User.rollNumber
+    get() = email.substringBefore('@').uppercase()

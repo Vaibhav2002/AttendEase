@@ -35,7 +35,6 @@ class AuthRepository @Inject constructor(
         get() = auth.currentUser != null
 
     fun isValidEmail(email: String): Boolean {
-        return true
         return supportedDomains.any(email::endsWith)
     }
 

@@ -29,10 +29,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import dev.vaibhav.attendease.shared.ui.components.AttendEaseAppBar
+import dev.vaibhav.attendease.shared.ui.components.AttendEaseSmallAppBar
 import io.github.alexzhirkevich.qrose.options.QrBallShape
 import io.github.alexzhirkevich.qrose.options.QrBrush
 import io.github.alexzhirkevich.qrose.options.QrFrameShape
@@ -73,8 +78,14 @@ fun HomeScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("AttendEase") },
+            val name = buildAnnotatedString {
+                append("Attend")
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                    append("Ease")
+                }
+            }
+            AttendEaseAppBar(
+                title = name,
                 actions = {
                     IconButton(onClick = onNavToProfile) {
                         AsyncImage(

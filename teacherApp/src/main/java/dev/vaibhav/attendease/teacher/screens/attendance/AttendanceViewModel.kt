@@ -104,11 +104,10 @@ class AttendanceViewModel @AssistedInject constructor(
         .launchIn(viewModelScope)
 
     private fun validateQR(model: QrModel): Boolean {
-        Log.d("QR DATA", Json.encodeToString(model))
-        val isOfCorrectDate = DateHelpers.toInstant(model.createdAt)
-            .let { DateHelpers.daysBetween(it, DateHelpers.now) }
-            .let { it == 0 }
-            .also { if (!it) showSnackBar("Please generate a new QR for today") }
+        val classCreationTime = classData.value?.createdAt ?: return false
+
+        val isOfCorrectDate = (DateHelpers.toInstant(model.createdAt) > classCreationTime)
+            .also { if (!it) showSnackBar("Please generate a new QR") }
 
         val isValidEmail = authRepo.isValidEmail(model.email)
             .also { if (!it) showSnackBar("Only rcciit.org.in emails are allowed") }

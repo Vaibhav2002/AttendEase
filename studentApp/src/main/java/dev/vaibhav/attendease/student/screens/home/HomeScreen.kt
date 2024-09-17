@@ -10,12 +10,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -71,15 +73,17 @@ fun HomeScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            AttendEaseAppBar(
-                title = "Home",
+            CenterAlignedTopAppBar(
+                title = { Text("AttendEase") },
                 actions = {
                     IconButton(onClick = onNavToProfile) {
                         AsyncImage(
                             model = viewModel.user.profilePic,
                             contentDescription = "Profile",
                             placeholder = rememberVectorPainter(Icons.Default.Person),
-                            modifier = Modifier.size(32.dp).clip(CircleShape)
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
                         )
                     }
                 }

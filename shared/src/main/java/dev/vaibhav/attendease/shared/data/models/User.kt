@@ -9,4 +9,4 @@ data class User(
 )
 
 val User.rollNumber
-    get() = email.substringBefore('@').uppercase()
+    get() = id

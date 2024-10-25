@@ -43,7 +43,7 @@ class AuthRepository @Inject constructor(
         role: Role
     ) {
         val email = account.email ?: throw Exception("Email not found")
-        if (!isValidEmail(email)) throw InvalidDomainException()
+//        if (!isValidEmail(email)) throw InvalidDomainException()
 
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         userRepository.saveUser(account, role)

@@ -7,7 +7,8 @@ import kotlinx.serialization.Serializable
 data class Class(
     val id: String = "",
     val subjectId: String = "",
-    val createdOn: Long = 0L
+    val createdOn: Long = 0L,
+    val attendees: List<String> = emptyList()
 )
 
 

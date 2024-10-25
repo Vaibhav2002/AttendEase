@@ -2,6 +2,7 @@ package dev.vaibhav.attendease.shared.data.repo
 
 import com.google.firebase.firestore.FirebaseFirestore
 import dev.vaibhav.attendease.shared.data.models.Department
+import dev.vaibhav.attendease.shared.data.models.Section
 import dev.vaibhav.attendease.shared.data.models.Subject
 import dev.vaibhav.attendease.shared.utils.DateHelpers
 import kotlinx.coroutines.channels.awaitClose
@@ -32,7 +33,8 @@ class SubjectsRepository @Inject constructor(
 
     suspend fun createSubject(
         title: String,
-        dept: Department
+        dept: Department,
+        section: Section
     ) {
         val id = "$title-${dept.name}"
         val subject = Subject(
@@ -40,7 +42,8 @@ class SubjectsRepository @Inject constructor(
             createdBy = authRepo.userId,
             created = DateHelpers.nowInMillis,
             title = title,
-            department = dept
+            department = dept,
+            section = section
         )
         firestore.collection(collection).document(id).set(subject).await()
     }

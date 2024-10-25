@@ -3,7 +3,6 @@ package dev.vaibhav.attendease.teacher.screens.attendance
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,7 +25,6 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -43,7 +41,6 @@ import coil.compose.AsyncImage
 import dev.vaibhav.attendease.shared.data.models.User
 import dev.vaibhav.attendease.shared.data.models.createdAt
 import dev.vaibhav.attendease.shared.data.models.rollNumber
-import dev.vaibhav.attendease.shared.ui.components.AttendEaseAppBar
 import dev.vaibhav.attendease.shared.ui.components.AttendEaseSmallAppBar
 import dev.vaibhav.attendease.shared.ui.screens.BaseScreenContent
 import dev.vaibhav.attendease.shared.utils.DateHelpers
@@ -59,11 +56,13 @@ fun AttendanceScreen(
     val subject by viewModel.subject.collectAsStateWithLifecycle()
     val classData by viewModel.classData.collectAsStateWithLifecycle()
     val attendees by viewModel.attendees.collectAsStateWithLifecycle()
+    val absentees by viewModel.absentees.collectAsStateWithLifecycle()
     val canTakeAttendance by viewModel.canTakeAttendance.collectAsStateWithLifecycle()
 
     val attendeeCount by remember {
         derivedStateOf { attendees.size }
     }
+    val absenteeCount by remember { derivedStateOf { absentees.size } }
 
     val title by remember {
         derivedStateOf {
@@ -158,9 +157,25 @@ fun AttendanceScreen(
                 AttendeeItem(user = it, Modifier.fillParentMaxWidth())
             }
 
+            item {
+                Text(
+                    text = "Absentees ($absenteeCount)",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = LocalContentColor.current.copy(alpha = 0.7f)
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
+            items(absentees) {
+                AttendeeItem(user = it, Modifier.fillParentMaxWidth())
+            }
         }
     }
 }
+
 
 @Composable
 fun AttendeeItem(

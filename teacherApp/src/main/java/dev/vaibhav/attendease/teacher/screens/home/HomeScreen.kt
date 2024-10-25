@@ -54,7 +54,6 @@ fun HomeScreen(
     onNavToProfile:() -> Unit
 ) {
     val subjects by viewModel.subjects.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     BaseScreenContent(
@@ -79,9 +78,6 @@ fun HomeScreen(
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            floatingActionButton = {
-                CreateSubjectFab(onClick = viewModel::onCreateSubjectClick)
-            },
             contentWindowInsets = WindowInsets(0.dp)
         ) {
             LazyColumn(
@@ -101,27 +97,6 @@ fun HomeScreen(
                     )
                 }
             }
-
-            if(viewModel.subjectCreationSheet){
-                val state = rememberModalBottomSheetState()
-                val isValid by viewModel.isValid.collectAsState()
-
-                CreateSubjectSheet(
-                    state = state,
-                    subject = viewModel.subject,
-                    dept = viewModel.department,
-                    departments = viewModel.departments,
-                    onDepartmentChange = viewModel::onDepartmentChange,
-                    onSubjectChange = viewModel::onSubjectChange,
-                    onDismiss = {
-                        scope.launch { state.hide() }
-                            .invokeOnCompletion { viewModel.subjectCreationSheet = false }
-                    },
-                    isValid = isValid,
-                    onSaveClick = viewModel::onSavePress
-                )
-            }
-
         }
     }
 }
@@ -154,18 +129,5 @@ fun SubjectCard(
                 color = LocalContentColor.current.copy(alpha = 0.7f)
             )
         }
-    }
-}
-
-@Composable
-fun CreateSubjectFab(
-    modifier: Modifier = Modifier,
-    onClick:() -> Unit
-) {
-    FloatingActionButton(modifier = modifier, onClick = onClick) {
-        Icon(
-            imageVector = Icons.Outlined.Add,
-            contentDescription = "Add Subject"
-        )
     }
 }

@@ -64,17 +64,4 @@ class HomeViewModel @Inject constructor(
     fun onDepartmentChange(department: Department) {
         this.department = department
     }
-
-    fun onSavePress() = flow { emit(subject to department) }
-        .onEach { isSaving = true }
-        .mapLatest { subjectsRepo.createSubject(it.first, it.second) }
-        .onEach { isSaving = false }
-        .onEach { subjectCreationSheet = false }
-        .onEach { showSnackBar("Subject created successfully") }
-        .safeCatch {
-            showSnackBar("Failed to create subject")
-            isSaving = false
-        }
-        .onIO()
-        .launchIn(viewModelScope)
 }

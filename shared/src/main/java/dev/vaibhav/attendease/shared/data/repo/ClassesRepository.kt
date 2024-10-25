@@ -1,13 +1,15 @@
 package dev.vaibhav.attendease.shared.data.repo
 
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import dev.vaibhav.attendease.shared.data.models.Attendance
 import dev.vaibhav.attendease.shared.data.models.Class
+import dev.vaibhav.attendease.shared.data.models.exceptions.AttendanceException
 import dev.vaibhav.attendease.shared.utils.DateHelpers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.tasks.await
+import java.util.UUID
 import javax.inject.Inject
 
 class ClassesRepository @Inject constructor(
@@ -26,25 +28,31 @@ class ClassesRepository @Inject constructor(
         awaitClose { listener.remove() }
     }
 
-    suspend fun getClass(classId: String): Class {
-        return firestore.collection(collection)
+    fun getClass(classId: String) = callbackFlow {
+        val listener = firestore.collection(collection)
             .document(classId)
-            .get()
-            .await()
-            .toObject(Class::class.java)
-            ?: throw Exception("Class not found")
+            .addSnapshotListener { value, error ->
+                if(error != null) throw error
+                value?.toObject(Class::class.java)?.let(::trySend)
+            }
+
+        awaitClose { listener.remove() }
     }
 
     suspend fun createClass(subjectId: String):String {
-        val currentDay = DateHelpers.toLocalDateTime(DateHelpers.now).dayOfYear
-        val id = "$subjectId-$currentDay"
-
         val classData = Class(
-            id = id,
+            id = UUID.randomUUID().toString(),
             createdOn = DateHelpers.nowInMillis,
             subjectId = subjectId
         )
-        firestore.collection(collection).document(id).set(classData).await()
+        firestore.collection(collection).document(classData.id).set(classData).await()
         return classData.id
+    }
+
+    suspend fun addAttendee(classId: String, userId: String) {
+        firestore.collection(collection)
+            .document(classId)
+            .update("attendees", FieldValue.arrayUnion(userId))
+            .await()
     }
 }

@@ -2,15 +2,23 @@ package dev.vaibhav.attendease.shared.data.repo
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.firestore.FirebaseFirestore
+import dev.vaibhav.attendease.shared.data.datastore.Preferences
 import dev.vaibhav.attendease.shared.data.models.Role
 import dev.vaibhav.attendease.shared.data.models.User
 import kotlinx.coroutines.tasks.await
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val preferences: Preferences
 ){
     private val collection = "users"
+
+    val user = preferences.user
+        .runCatching { Json.decodeFromString<User>(this) }
+        .getOrDefault(null)
 
     suspend fun getUsers(ids: List<String>): List<User>{
         if(ids.isEmpty()) return emptyList()
@@ -47,5 +55,7 @@ class UserRepository @Inject constructor(
             .document(user.id)
             .set(user)
             .await()
+
+        preferences.user = Json.encodeToString(user)
     }
 }

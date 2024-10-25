@@ -3,6 +3,7 @@ package dev.vaibhav.attendease.shared.data.repo
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import dev.vaibhav.attendease.shared.data.datastore.Preferences
 import dev.vaibhav.attendease.shared.data.models.Role
 import dev.vaibhav.attendease.shared.data.models.User
 import dev.vaibhav.attendease.shared.utils.auth.InvalidDomainException
@@ -12,6 +13,7 @@ import javax.inject.Inject
 class AuthRepository @Inject constructor(
     private val auth: FirebaseAuth,
     private val userRepository: UserRepository,
+    private val preferences: Preferences
 ) {
     private val supportedDomains = listOf("rcciit.org.in")
 

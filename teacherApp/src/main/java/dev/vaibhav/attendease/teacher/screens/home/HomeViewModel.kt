@@ -14,8 +14,6 @@ import dev.vaibhav.attendease.shared.ui.screens.ScreenState
 import dev.vaibhav.attendease.shared.utils.onIO
 import dev.vaibhav.attendease.shared.utils.safeCatch
 import dev.vaibhav.attendease.shared.utils.toStateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -45,7 +43,7 @@ class HomeViewModel @Inject constructor(
 
     val user = authRepo.user
 
-    val subjects = subjectsRepo.subjects
+    val subjects = subjectsRepo.subjectsCreatedByMe
         .onStart { setScreenState(ScreenState.Loading) }
         .onEach { setScreenState(ScreenState.Normal) }
         .safeCatch { showSnackBar(); setScreenState(ScreenState.Normal) }

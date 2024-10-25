@@ -14,7 +14,8 @@ data class Subject @Keep constructor(
     val department: Department = Department.IT,
     val section: Section = Section.A,
     val created: Long = 0L,
-    val studentsEnrolled: List<String> = emptyList()
+    val studentsEnrolled: List<String> = emptyList(),
+    val creatorName: String = ""
 )
 
 val Subject.createdAt: Instant

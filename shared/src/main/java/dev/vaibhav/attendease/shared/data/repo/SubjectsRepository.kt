@@ -1,6 +1,7 @@
 package dev.vaibhav.attendease.shared.data.repo
 
 import com.google.firebase.firestore.FirebaseFirestore
+import dev.vaibhav.attendease.shared.data.datastore.Preferences
 import dev.vaibhav.attendease.shared.data.models.Department
 import dev.vaibhav.attendease.shared.data.models.Section
 import dev.vaibhav.attendease.shared.data.models.Subject
@@ -12,14 +13,26 @@ import javax.inject.Inject
 
 class SubjectsRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
-    private val authRepo: AuthRepository
+    private val authRepo: AuthRepository,
+    private val userRepo: UserRepository
 ) {
 
     private val collection = "subjects"
 
-    val subjects = callbackFlow {
+    val subjectsCreatedByMe = callbackFlow {
         val listener = firestore.collection(collection)
-            .whereEqualTo("createdBy", authRepo.userId)
+            .whereEqualTo("createdBy", userRepo.user!!.id)
+            .addSnapshotListener { value, error ->
+                if (error != null) throw error
+                value?.toObjects(Subject::class.java)?.toList()?.let(::trySend)
+            }
+
+        awaitClose { listener.remove() }
+    }
+
+    val subjectsEnrolledIn = callbackFlow {
+        val listener = firestore.collection(collection)
+            .whereArrayContains("studentsEnrolled", userRepo.user!!.id)
             .addSnapshotListener { value, error ->
                 if (error != null) throw error
                 value?.toObjects(Subject::class.java)?.toList()?.let(::trySend)

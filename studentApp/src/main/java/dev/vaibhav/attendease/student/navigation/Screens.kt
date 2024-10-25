@@ -12,5 +12,8 @@ sealed interface Screens {
     data object Home : Screens
 
     @Serializable
+    data object QR: Screens
+
+    @Serializable
     data object Profile : Screens
 }

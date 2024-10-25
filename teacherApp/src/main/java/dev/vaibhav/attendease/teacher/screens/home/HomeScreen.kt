@@ -42,6 +42,7 @@ import coil.compose.AsyncImage
 import dev.vaibhav.attendease.shared.data.models.Subject
 import dev.vaibhav.attendease.shared.data.models.label
 import dev.vaibhav.attendease.shared.ui.components.AttendEaseAppBar
+import dev.vaibhav.attendease.shared.ui.components.SubjectCard
 import dev.vaibhav.attendease.shared.ui.screens.BaseScreenContent
 import kotlinx.coroutines.launch
 
@@ -93,41 +94,11 @@ fun HomeScreen(
                     SubjectCard(
                         subject = it,
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = { onNavToClasses(it) }
+                        onClick = { onNavToClasses(it) },
+                        forRole = viewModel.user.role
                     )
                 }
             }
-        }
-    }
-}
-
-
-@Composable
-fun SubjectCard(
-    subject: Subject,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
-    Surface(
-        modifier = modifier,
-        onClick = onClick,
-        tonalElevation = 2.dp,
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)) {
-
-            Text(
-                text = subject.title,
-                style = MaterialTheme.typography.titleLarge
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = subject.department.label,
-                style = MaterialTheme.typography.bodyMedium,
-                color = LocalContentColor.current.copy(alpha = 0.7f)
-            )
         }
     }
 }

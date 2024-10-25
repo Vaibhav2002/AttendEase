@@ -21,6 +21,8 @@ import dev.vaibhav.attendease.shared.ui.screens.profile.ProfileScreen
 import dev.vaibhav.attendease.shared.ui.screens.profile.ProfileViewModel
 import dev.vaibhav.attendease.student.screens.home.HomeScreen
 import dev.vaibhav.attendease.student.screens.home.HomeViewModel
+import dev.vaibhav.attendease.student.screens.qr.QRScreen
+import dev.vaibhav.attendease.student.screens.qr.QrViewModel
 
 @Composable
 fun AppNavHost(
@@ -67,7 +69,17 @@ fun AppNavHost(
             HomeScreen(
                 viewModel = viewModel,
                 modifier = Modifier.fillMaxSize(),
+                onNavToQRScreen = { navController.navigate(Screens.QR) },
                 onNavToProfile = { navController.navigate(Screens.Profile) }
+            )
+        }
+
+        composable<Screens.QR> {
+            val viewModel = hiltViewModel<QrViewModel>()
+            QRScreen(
+                viewModel = viewModel,
+                modifier = Modifier.fillMaxSize(),
+                onNavBack = { navController.popBackStack() }
             )
         }
 

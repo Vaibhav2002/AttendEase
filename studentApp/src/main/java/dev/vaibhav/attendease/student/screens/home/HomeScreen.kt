@@ -1,126 +1,106 @@
 package dev.vaibhav.attendease.student.screens.home
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.outlined.Refresh
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import dev.vaibhav.attendease.shared.ui.components.AttendEaseAppBar
-import dev.vaibhav.attendease.shared.ui.components.AttendEaseSmallAppBar
-import io.github.alexzhirkevich.qrose.options.QrBallShape
-import io.github.alexzhirkevich.qrose.options.QrBrush
-import io.github.alexzhirkevich.qrose.options.QrFrameShape
-import io.github.alexzhirkevich.qrose.options.QrLogoShape
-import io.github.alexzhirkevich.qrose.options.QrPixelShape
-import io.github.alexzhirkevich.qrose.options.QrShapes
-import io.github.alexzhirkevich.qrose.options.circle
-import io.github.alexzhirkevich.qrose.options.roundCorners
-import io.github.alexzhirkevich.qrose.options.solid
-import io.github.alexzhirkevich.qrose.rememberQrCodePainter
+import dev.vaibhav.attendease.shared.ui.components.SubjectCard
+import dev.vaibhav.attendease.student.navigation.Screens
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
     modifier: Modifier = Modifier,
+    onNavToQRScreen: () -> Unit,
     onNavToProfile: () -> Unit
 ) {
-    var refreshCount by rememberSaveable {
-        mutableIntStateOf(0)
-    }
-    val colorScheme = MaterialTheme.colorScheme
-    val qrcodePainter = rememberQrCodePainter(
-        data = viewModel.getQRData(),
-        refreshCount
-    ) {
-        colors {
-            dark = QrBrush.solid(colorScheme.primary)
-        }
-
-        shapes {
-            ball = QrBallShape.circle()
-            darkPixel = QrPixelShape.roundCorners()
-            frame = QrFrameShape.roundCorners(.25f)
-        }
-    }
-
+    val subjects by viewModel.subjects.collectAsStateWithLifecycle()
     Scaffold(
         modifier = modifier,
-        topBar = {
-            val name = buildAnnotatedString {
-                append("Attend")
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
-                    append("Ease")
-                }
-            }
-            AttendEaseAppBar(
-                title = name,
-                actions = {
-                    IconButton(onClick = onNavToProfile) {
-                        AsyncImage(
-                            model = viewModel.user.profilePic,
-                            contentDescription = "Profile",
-                            placeholder = rememberVectorPainter(Icons.Default.Person),
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clip(CircleShape)
-                        )
-                    }
-                }
-            )
-        },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { refreshCount++ }
-            ) {
-                Icon(imageVector = Icons.Outlined.Refresh, contentDescription = "Refresh QR")
+            FloatingActionButton(onClick = onNavToQRScreen) {
+                Icon(imageVector = Icons.Filled.QrCode, contentDescription = "Refresh QR")
             }
-        }
-    ) {
-        Box(
+        },
+        topBar = { AppBar(viewModel, onNavToProfile) }
+    ) { innerPadding ->
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it),
-            contentAlignment = Alignment.Center
+                .padding(innerPadding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Image(
-                painter = qrcodePainter,
-                contentDescription = "QR CODE",
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier.fillMaxWidth(0.7f)
-            )
+            items(subjects) {
+                SubjectCard(
+                    subject = it,
+                    modifier = Modifier.fillParentMaxWidth(),
+                    onClick = {},
+                    forRole = viewModel.user.role
+                )
+            }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AppBar(
+    viewModel: HomeViewModel,
+    onNavToProfile: () -> Unit
+) {
+    val name = buildAnnotatedString {
+        append("Attend")
+        withStyle(
+            style = SpanStyle(
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold
+            )
+        ) {
+            append("Ease")
+        }
+    }
+    AttendEaseAppBar(
+        title = name,
+        actions = {
+            IconButton(onClick = onNavToProfile) {
+                AsyncImage(
+                    model = viewModel.user.profilePic,
+                    contentDescription = "Profile",
+                    placeholder = rememberVectorPainter(Icons.Default.Person),
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                )
+            }
+        }
+    )
 }

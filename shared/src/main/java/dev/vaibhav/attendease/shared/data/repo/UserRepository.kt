@@ -13,15 +13,19 @@ import javax.inject.Inject
 class UserRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val preferences: Preferences
-){
+) {
     private val collection = "users"
 
-    val user = preferences.user
-        .runCatching { Json.decodeFromString<User>(this) }
-        .getOrDefault(null)
+    val user
+        get() = preferences.user
+            .runCatching { Json.decodeFromString<User>(this) }
+            .getOrDefault(null)
 
-    suspend fun getUsers(ids: List<String>): List<User>{
-        if(ids.isEmpty()) return emptyList()
+    val userId
+        get() = user?.id ?: throw IllegalStateException("User not logged in")
+
+    suspend fun getUsers(ids: List<String>): List<User> {
+        if (ids.isEmpty()) return emptyList()
         return firestore.collection(collection)
             .whereIn("id", ids)
             .get()
@@ -43,7 +47,7 @@ class UserRepository @Inject constructor(
     suspend fun saveUser(
         account: GoogleSignInAccount,
         role: Role
-    ){
+    ) {
         val user = User(
             id = account.email?.substringBefore('@') ?: "",
             name = account.displayName ?: "",

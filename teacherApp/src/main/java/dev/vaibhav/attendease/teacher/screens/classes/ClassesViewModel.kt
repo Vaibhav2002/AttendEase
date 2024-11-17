@@ -8,9 +8,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.vaibhav.attendease.shared.data.models.Subject
 import dev.vaibhav.attendease.shared.data.repo.ClassesRepository
-import dev.vaibhav.attendease.shared.data.repo.SubjectsRepository
 import dev.vaibhav.attendease.shared.ui.screens.BaseViewModel
 import dev.vaibhav.attendease.shared.ui.screens.ScreenState
 import dev.vaibhav.attendease.shared.utils.onIO
@@ -19,7 +17,6 @@ import dev.vaibhav.attendease.shared.utils.toStateFlow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
@@ -42,7 +39,7 @@ class ClassesViewModel @AssistedInject constructor(
     val classes = flow { emit(subjectId) }
         .distinctUntilChanged()
         .onEach { setScreenState(ScreenState.Loading) }
-        .flatMapLatest { classesRepo.getClasses(it) }
+        .flatMapLatest { classesRepo.observeClasses(it) }
         .onEach { setScreenState(ScreenState.Normal) }
         .safeCatch { showSnackBar(); setScreenState(ScreenState.Normal) }
         .onIO()

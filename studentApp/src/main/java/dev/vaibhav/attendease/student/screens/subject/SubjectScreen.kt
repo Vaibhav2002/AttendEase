@@ -1,33 +1,23 @@
-package dev.vaibhav.attendease.teacher.screens.classes
+package dev.vaibhav.attendease.student.screens.subject
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,57 +27,37 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.vaibhav.attendease.shared.data.models.Class
-import dev.vaibhav.attendease.shared.data.models.Subject
 import dev.vaibhav.attendease.shared.data.models.createdAt
 import dev.vaibhav.attendease.shared.ui.components.AttendEaseAppBar
 import dev.vaibhav.attendease.shared.ui.components.ClassCard
 import dev.vaibhav.attendease.shared.ui.screens.BaseScreenContent
 import dev.vaibhav.attendease.shared.utils.DateHelpers
-import dev.vaibhav.attendease.shared.utils.safeCatch
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.onEach
 import java.time.format.TextStyle
+import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClassesScreen(
-    subjectName: String,
-    viewModel: ClassesViewModel,
+fun SubjectScreen(
+    viewModel: SubjectViewModel,
     modifier: Modifier = Modifier,
-    onBack: () -> Unit,
-    onNavToAttendance: (String) -> Unit
+    onBack:() -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
     val classes by viewModel.classes
-        .mapLatest { it.groupBy { DateHelpers.toLocalDateTime(it.createdAt).month } }
+        .mapLatest { it.groupBy { DateHelpers.toLocalDateTime(it.classData.createdAt).month } }
         .collectAsStateWithLifecycle(emptyMap())
-
-    LaunchedEffect(Unit) {
-        viewModel.classCreated
-            .onEach { onNavToAttendance(it) }
-            .safeCatch()
-            .launchIn(this)
-    }
 
     BaseScreenContent(
         viewModel = viewModel,
         modifier = modifier,
         topAppBar = {
             AttendEaseAppBar(
-                title = subjectName,
+                title = viewModel.subjectName,
                 onBack = onBack,
                 scrollBehavior = scrollBehavior
             )
         },
-        fab = {
-            CreateClassFab(
-                isCreating = viewModel.isCreatingClass,
-                onClick = viewModel::onCreateClass
-            )
-        }
     ) {
         LazyVerticalGrid(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -96,6 +66,15 @@ fun ClassesScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+
+            item(span = { GridItemSpan(3) }, key = "Stats", contentType = "Stats") {
+                StatsSection(
+                    classes = classes.values.flatten(),
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(vertical = 16.dp)
+                )
+            }
+
             classes.forEach { (month, classes) ->
                 item(span = { GridItemSpan(3) }) {
                     Text(
@@ -109,9 +88,10 @@ fun ClassesScreen(
 
                 items(classes) {
                     ClassCard(
-                        classData = it,
+                        classData = it.classData,
+                        isPresent = it.present,
                         modifier = Modifier.fillMaxWidth().aspectRatio(1f),
-                        onClick = { onNavToAttendance(it.id) }
+                        onClick = {}
                     )
                 }
             }
@@ -120,18 +100,55 @@ fun ClassesScreen(
 }
 
 @Composable
-fun CreateClassFab(
-    isCreating: Boolean,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
+fun StatsSection(
+    classes: List<SubjectViewModel.ClassData>,
+    modifier: Modifier = Modifier
 ) {
-    FloatingActionButton(
+    val attended by remember(classes) {
+        derivedStateOf { classes.filter { it.present }.size }
+    }
+
+    val percentage by remember(attended, classes) {
+        derivedStateOf { abs(attended / classes.size.toFloat() * 100).toInt() }
+    }
+    Row(
         modifier = modifier,
-        onClick = { if (!isCreating) onClick() },
+        horizontalArrangement = Arrangement.spacedBy(32.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Crossfade(targetState = isCreating, label = "Create class fab") {
-            if (it) CircularProgressIndicator()
-            else Icon(imageVector = Icons.Outlined.Add, contentDescription = "Create class")
-        }
+
+        StatsItem(
+            title = "Attended",
+            value = "$attended/${classes.size}"
+        )
+
+        StatsItem(
+            title = "Attendance %",
+            value = "${percentage}%"
+        )
+    }
+}
+
+@Composable
+private fun StatsItem(
+    title: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Text(
+            text = value,
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyMedium,
+            color = LocalContentColor.current.copy(alpha = 0.6f)
+        )
     }
 }

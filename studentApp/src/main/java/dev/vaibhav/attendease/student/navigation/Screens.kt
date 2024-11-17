@@ -15,5 +15,8 @@ sealed interface Screens {
     data object QR: Screens
 
     @Serializable
+    data class Subject(val id: String, val name: String) : Screens
+
+    @Serializable
     data object Profile : Screens
 }

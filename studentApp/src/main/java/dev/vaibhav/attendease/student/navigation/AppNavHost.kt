@@ -14,6 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import dev.vaibhav.attendease.shared.data.models.Role
 import dev.vaibhav.attendease.shared.ui.screens.auth.AuthScreen
 import dev.vaibhav.attendease.shared.ui.screens.auth.AuthViewModel
@@ -23,6 +24,8 @@ import dev.vaibhav.attendease.student.screens.home.HomeScreen
 import dev.vaibhav.attendease.student.screens.home.HomeViewModel
 import dev.vaibhav.attendease.student.screens.qr.QRScreen
 import dev.vaibhav.attendease.student.screens.qr.QrViewModel
+import dev.vaibhav.attendease.student.screens.subject.SubjectScreen
+import dev.vaibhav.attendease.student.screens.subject.SubjectViewModel
 
 @Composable
 fun AppNavHost(
@@ -56,7 +59,7 @@ fun AppNavHost(
                 modifier = Modifier.fillMaxSize(),
                 onAuthSuccess = {
                     navController.navigate(Screens.Home) {
-                        popUpTo(Screens.Auth){
+                        popUpTo(Screens.Auth) {
                             inclusive = true
                         }
                     }
@@ -70,7 +73,22 @@ fun AppNavHost(
                 viewModel = viewModel,
                 modifier = Modifier.fillMaxSize(),
                 onNavToQRScreen = { navController.navigate(Screens.QR) },
-                onNavToProfile = { navController.navigate(Screens.Profile) }
+                onNavToProfile = { navController.navigate(Screens.Profile) },
+                onNavToSubject = { navController.navigate(Screens.Subject(it.id, it.title)) }
+            )
+        }
+
+        composable<Screens.Subject> {
+            val route = it.toRoute<Screens.Subject>()
+            val viewModel =
+                hiltViewModel<SubjectViewModel, SubjectViewModel.Factory> {
+                    it.create(id = route.id, name = route.name)
+                }
+
+            SubjectScreen(
+                viewModel = viewModel,
+                modifier = Modifier.fillMaxSize(),
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -89,8 +107,8 @@ fun AppNavHost(
                 viewModel = viewModel,
                 modifier = Modifier.fillMaxSize(),
                 onLogout = {
-                    navController.navigate(Screens.Auth){
-                        popUpTo(navController.graph.id){
+                    navController.navigate(Screens.Auth) {
+                        popUpTo(navController.graph.id) {
                             inclusive = true
                         }
                     }

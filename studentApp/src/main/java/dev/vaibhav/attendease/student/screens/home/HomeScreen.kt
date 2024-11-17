@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import dev.vaibhav.attendease.shared.data.models.Subject
 import dev.vaibhav.attendease.shared.ui.components.AttendEaseAppBar
 import dev.vaibhav.attendease.shared.ui.components.SubjectCard
 import dev.vaibhav.attendease.student.navigation.Screens
@@ -40,7 +41,8 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     modifier: Modifier = Modifier,
     onNavToQRScreen: () -> Unit,
-    onNavToProfile: () -> Unit
+    onNavToProfile: () -> Unit,
+    onNavToSubject: (Subject) -> Unit
 ) {
     val subjects by viewModel.subjects.collectAsStateWithLifecycle()
     Scaffold(
@@ -63,7 +65,7 @@ fun HomeScreen(
                 SubjectCard(
                     subject = it,
                     modifier = Modifier.fillParentMaxWidth(),
-                    onClick = {},
+                    onClick = { onNavToSubject(it) },
                     forRole = viewModel.user.role
                 )
             }

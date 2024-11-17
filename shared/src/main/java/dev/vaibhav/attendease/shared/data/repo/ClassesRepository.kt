@@ -2,6 +2,7 @@ package dev.vaibhav.attendease.shared.data.repo
 
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import dev.vaibhav.attendease.shared.data.models.Class
 import dev.vaibhav.attendease.shared.utils.DateHelpers
 import kotlinx.coroutines.channels.awaitClose
@@ -18,6 +19,7 @@ class ClassesRepository @Inject constructor(
     fun observeClasses(subjectId: String) = callbackFlow {
         val listener = firestore.collection(collection)
             .whereEqualTo("subjectId", subjectId)
+            .orderBy("createdOn", Query.Direction.DESCENDING)
             .addSnapshotListener { value, error ->
                 if (error != null) throw error
                 value?.toObjects(Class::class.java)
@@ -32,6 +34,7 @@ class ClassesRepository @Inject constructor(
     suspend fun getClasses(subjectId: String) = firestore
         .collection(collection)
         .whereEqualTo("subjectId", subjectId)
+        .orderBy("createdOn", Query.Direction.DESCENDING)
         .get()
         .await()
         ?.toObjects(Class::class.java)

@@ -1,6 +1,7 @@
 package dev.vaibhav.attendease.shared.data.repo
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import dev.vaibhav.attendease.shared.data.datastore.Preferences
 import dev.vaibhav.attendease.shared.data.models.Department
 import dev.vaibhav.attendease.shared.data.models.Section
@@ -22,6 +23,7 @@ class SubjectsRepository @Inject constructor(
     val subjectsCreatedByMe = callbackFlow {
         val listener = firestore.collection(collection)
             .whereEqualTo("createdBy", userRepo.user!!.id)
+            .orderBy("created", Query.Direction.DESCENDING)
             .addSnapshotListener { value, error ->
                 if (error != null) throw error
                 value?.toObjects(Subject::class.java)?.toList()?.let(::trySend)
@@ -33,6 +35,7 @@ class SubjectsRepository @Inject constructor(
     val subjectsEnrolledIn = callbackFlow {
         val listener = firestore.collection(collection)
             .whereArrayContains("studentsEnrolled", userRepo.user!!.id)
+            .orderBy("created", Query.Direction.DESCENDING)
             .addSnapshotListener { value, error ->
                 if (error != null) throw error
                 value?.toObjects(Subject::class.java)?.toList()?.let(::trySend)

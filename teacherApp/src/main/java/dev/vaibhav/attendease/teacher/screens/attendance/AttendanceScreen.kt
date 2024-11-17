@@ -111,7 +111,7 @@ fun AttendanceScreen(
             }
 
             if (canTakeAttendance) {
-                item {
+                item("Scanner", "Scanner") {
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -120,9 +120,7 @@ fun AttendanceScreen(
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
                     ) {
                         QrScanner(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clipToBounds(),
+                            modifier = Modifier.fillMaxSize().clipToBounds(),
                             flashlightOn = false,
                             openImagePicker = false,
                             onCompletion = viewModel::takeAttendance,

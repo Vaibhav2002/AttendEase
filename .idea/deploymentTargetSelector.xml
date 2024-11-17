@@ -18,10 +18,10 @@
       </SelectionState>
       <SelectionState runConfigName="studentApp">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-09-10T08:23:16.148978Z">
+        <DropdownSelection timestamp="2024-10-25T12:07:17.587329Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=RZCT70ZV76W" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/vaibhav/.android/avd/Pixel_8_Pro_API_34.avd" />
             </handle>
           </Target>
         </DropdownSelection>

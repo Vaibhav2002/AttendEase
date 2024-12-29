@@ -1,7 +1,7 @@
 # AttendEase - Manage your attendance with ease
 
 ## About
-AttendEase is a Attendance Recording and Tracking app built under the HOD of IT Dr.Hironmoy Roy for the IT Department of RCCIIT. </br>
+AttendEase is a Attendance Recording and Tracking app built for the HOD of IT Department Dr.Hironmoy Roy for the IT Department of RCCIIT. </br>
 
 #### AttendEase consists of - 
 - Android App for Teachers

@@ -17,6 +17,13 @@ Teachers can track attendance for multiple subjects and multiple classes while a
 - Viewing Attendance history
 - Attendance validations to only scan QR's created after class creation and only of those students which are enrolled.
 
+### Screenshots
+
+|                                  |                                        |                                              |
+|----------------------------------|----------------------------------------|----------------------------------------------|
+| ![home](media/teachers/home.jpg) | ![subject](media/teachers/subject.jpg) | ![attendance](media/teachers/attendance.jpg) |
+
+
 ## AttendEase App for Students
 Attendease app for Students is built for students to see their Attendance history in the palm of their hands at any time.
 Students can generate QR code for easy attendance recording and can also see their attendance with metrics.
@@ -24,6 +31,13 @@ Students can generate QR code for easy attendance recording and can also see the
 ### Features
 - View your attendance history and know in which situation you are.
 - Get your attendance recorded easily by just getting your QR scanned.
+
+
+### Screenshots
+
+|                                  |                                        |                                      |
+|----------------------------------|----------------------------------------|--------------------------------------|
+| ![home](media/students/home.jpg) | ![subject](media/students/subject.jpg) | ![attendance](media/students/qr.jpg) |
 
 ## AttendEase Web Panel For Teachers
 AttendEase also provides a Web Admin Panel for teacehers to easily create and see their Subjects and Classes. Attendance in each class and metric like Average Attendance and so on.

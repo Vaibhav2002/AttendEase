@@ -53,7 +53,7 @@ class SubjectViewModel @AssistedInject constructor(
         .onStart { setScreenState(ScreenState.Loading) }
         .onEach { setScreenState(ScreenState.Normal) }
         .onEach { subjectName = it.title }
-//        .safeCatch { setErrorState(it) }
+        .safeCatch { setErrorState(it) }
         .onIO()
         .toStateFlow(viewModelScope, null)
 
@@ -70,6 +70,5 @@ class SubjectViewModel @AssistedInject constructor(
         }
         .onEach { setScreenState(ScreenState.Normal) }
         .onIO()
-//        .safeCatch { setErrorState(it) }
         .toStateFlow(viewModelScope, emptyList())
 }

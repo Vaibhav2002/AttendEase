@@ -104,8 +104,8 @@ fun StatsSection(
     classes: List<SubjectViewModel.ClassData>,
     modifier: Modifier = Modifier
 ) {
-    val attended by remember(classes) {
-        derivedStateOf { classes.filter { it.present }.size }
+    val attended = remember(classes) {
+        classes.count { it.present }
     }
 
     val percentage by remember(attended, classes) {
